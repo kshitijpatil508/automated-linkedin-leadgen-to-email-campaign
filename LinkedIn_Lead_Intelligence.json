@@ -1,0 +1,2305 @@
+{
+  "name": "LINKEDIN ASSIGNMENT",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -176
+      ],
+      "id": "fb5ed136-9ac1-4537-a59b-664a76940735",
+      "name": "When clicking ‘Execute workflow’",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the items from the previous node\nconst items = Object.values($input.all());\nconst results = [];\n\n// Keywords for high-intent sales leads\nconst salesRoles = [\"AE\", \"Account Executive\", \"SDR\", \"BDR\", \"Sales\", \"Business Development\", \"Founder\"  ,\"sales\",\n  \"sales coach\",\n  \"head of sales\",\n  \"vp\",\n  \"vice president\",\n  \"fractional\",\n  \"revenue\",\n  \"gtm\",\n  \"go-to-market\",\n  \"outbound\",\n  \"cold\",\n  \"ai\"];\n\nfor (const item of items) {\n  const p = item.json;\n\n  // 1. ROLE FILTER: Ensure they are in sales/leadership\n  const headline = (p.headline || \"\").toLowerCase();\n  const isSalesPro = salesRoles.some(role => headline.includes(role.toLowerCase()));\n\n  // 2. ENGAGEMENT POTENTIAL: \n  // We prioritize people with >500 connections (active) OR Premium accounts\n  const isActiveUser = (p.connectionsCount > 500) || p.premium === true;\n\n  // 3. TARGETING \"PRACTITIONERS\":\n  // We actually filter OUT people with massive follower counts (>100k) \n  // because their comment sections are too crowded for you to stand out.\n  const isAccessible = (p.followerCount || 0) < 50000;\n\n  if (isSalesPro && isActiveUser && isAccessible) {\n    const jobTitle = (p.experience && p.experience[0] && p.experience[0].position) || p.headline || \"\";\n    results.push({\n      json: {\n        linkedinUrl: p.linkedinUrl || \"\",\n        firstName: p.firstName || \"\",\n        lastName: p.lastName || \"\",\n        followersCount: p.followerCount || 0,\n        // Grabbing the first current position title or falling back to headline\n        title: (p.currentPosition && p.currentPosition[0] && p.currentPosition[0].position) || p.headline || \"\",\n        role:jobTitle\n      }\n    });\n  }\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        -176
+      ],
+      "id": "42752076-6fa0-42db-bfe4-eb14d7a2a0ec",
+      "name": "Filter Potential Influencers"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This will store our final list of clean domains\nconst output = [];\n\n// Loop through EVERY item coming from your scraper\nfor (const item of $input.all()) {\n  let str = item.json.linkedinUrl;\n\n  if (str) {\n \n    output.push(str);\n  }\n}\n\nquery =  {\n    \"includeQuotePosts\": true,\n    \"includeReposts\": false,\n    \"maxComments\": 20,\n    \"maxPosts\": 5,\n    \"maxReactions\": 5,\n    \"postedLimit\": \"week\",\n    \"scrapeComments\": false,\n    \"scrapeReactions\": false,\n    \"targetUrls\": output\n}\n\nreturn query"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        -176
+      ],
+      "id": "e4612e8b-b9ec-43aa-9e04-5915e355c292",
+      "name": "Posts Search Query"
+    },
+    {
+      "parameters": {
+        "actorSource": "store",
+        "actorId": {
+          "__rl": true,
+          "value": "A3cAPGpwBEG8RJwse",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Profile Posts Scraper (No Cookies)⚡$2 per 1k (harvestapi/linkedin-profile-posts)",
+          "cachedResultUrl": "https://console.apify.com/actors/A3cAPGpwBEG8RJwse/input"
+        },
+        "customBody": "{\n  \"includeQuotePosts\": true,\n  \"includeReposts\": false,\n  \"maxComments\": 20,\n  \"maxPosts\": 5,\n  \"maxReactions\": 5,\n  \"postedLimit\": \"week\",\n  \"scrapeComments\": false,\n  \"scrapeReactions\": false,\n  \"targetUrls\": [\n    \"https://www.linkedin.com/in/hollyallen1\",\n    \"https://www.linkedin.com/in/nathanbliss1\",\n    \"https://www.linkedin.com/in/craig-selander-5a27804\",\n    \"https://www.linkedin.com/in/mzj11\",\n    \"https://www.linkedin.com/in/danlubic\",\n    \"https://www.linkedin.com/in/michael-maher-a5b32912\",\n    \"https://www.linkedin.com/in/mhirshoren\",\n    \"https://www.linkedin.com/in/prashantnj\",\n    \"https://www.linkedin.com/in/rklair\",\n    \"https://www.linkedin.com/in/timothygrandy\",\n    \"https://www.linkedin.com/in/frank-holger\",\n    \"https://www.linkedin.com/in/john-lacorte-005208197\",\n    \"https://www.linkedin.com/in/timob1\",\n    \"https://www.linkedin.com/in/bryan-finley-2b959312\",\n    \"https://www.linkedin.com/in/aderussy\",\n    \"https://www.linkedin.com/in/mikeclementspittsburgh\",\n    \"https://www.linkedin.com/in/mikelittleton\",\n    \"https://www.linkedin.com/in/ollelennegren\",\n    \"https://www.linkedin.com/in/kfree\",\n    \"https://www.linkedin.com/in/coryrotkel\"\n  ]\n}",
+        "memory": 256
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        976,
+        32
+      ],
+      "id": "f506d10b-3a1b-4b48-b19f-a9b7ae92b8a7",
+      "name": "Get Posts URLFrom Profiles",
+      "credentials": {
+        "apifyApi": {
+          "id": "ZuB1R5erfwTzLNyD",
+          "name": "Apify account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "sXHvLrazP3OkjrNp1",
+        "limit": null
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -176
+      ],
+      "id": "3ca042d0-cd2d-4aa5-aadf-6044e51684ff",
+      "name": "Scrape LinkedIn Profiles",
+      "credentials": {
+        "apifyApi": {
+          "id": "ZuB1R5erfwTzLNyD",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "=6agW3S6m8RVFyD5gX",
+        "limit": null
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        976,
+        -176
+      ],
+      "id": "09e2cebe-39c1-4f63-a56d-5b38c8157fb8",
+      "name": "Posts URLs and Insights",
+      "credentials": {
+        "apifyApi": {
+          "id": "ZuB1R5erfwTzLNyD",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// This will store our final list of clean domains\nconst output = [];\n\n// Loop through EVERY item coming from your scraper\nfor (const item of $input.all()) {\n  let str = item.json.linkedinUrl;\n\n  if (str) {\n \n    output.push(str);\n  }\n}\nquery = {\n    \"maxItems\": 20,\n    \"posts\": output,\n\n    \"profileScraperMode\": \"main\"\n}\n\nreturn query\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -176
+      ],
+      "id": "3e0363b1-bb59-48c9-825d-f64721dae9e2",
+      "name": "Posts Search Query1"
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "uzeIwqfr6KkWsR0fb",
+        "limit": null
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        -176
+      ],
+      "id": "556ce140-ee31-4bcb-9a13-ce65e1f27098",
+      "name": "Scrape Commentors Profile",
+      "credentials": {
+        "apifyApi": {
+          "id": "ZuB1R5erfwTzLNyD",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "ZI6ykbLlGS3APaPE8",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Post Comments Scraper (No Cookies)⚡$2 per 1k (harvestapi/linkedin-post-comments)",
+          "cachedResultUrl": "https://console.apify.com/actors/ZI6ykbLlGS3APaPE8/input"
+        },
+        "customBody": "{\n  \"maxItems\": 20,\n  \"posts\": [\n    \"https://www.linkedin.com/posts/hollyallen1_if-i-were-evaluating-data-providers-to-help-activity-7415327753861931008-XTSS\",\n    \"https://www.linkedin.com/posts/hollyallen1_they-say-ex-sportspeople-make-the-best-salespeople-activity-7417138345891450880-qlhp\",\n    \"https://www.linkedin.com/posts/hollyallen1_officially-back-to-work-after-the-best-holiday-activity-7416398559857758208-MlrA\",\n    \"https://www.linkedin.com/posts/hollyallen1_if-i-didnt-want-to-post-on-linkedin-but-activity-7416791668852498433-eVEJ\",\n    \"https://www.linkedin.com/posts/michael-maher-a5b32912_bestplacesit-activity-7415448581551079424-ln0J\",\n    \"https://www.linkedin.com/posts/activity-7416864140805406721-wHRW\",\n    \"https://www.linkedin.com/posts/activity-7415512011486515200-KWvF\",\n    \"https://www.linkedin.com/posts/activity-7415592055772774400-oVBG\",\n    \"https://www.linkedin.com/posts/activity-7416856667126149120-XpbB\",\n    \"https://www.linkedin.com/posts/activity-7415044620163866624-u5Wt\",\n    \"https://www.linkedin.com/posts/mzj11_bluetooth-ces-remotepatientmonitoring-activity-7414826579014561792-TaDR\"\n  ],\n  \"profileScraperMode\": \"main\"\n}",
+        "memory": 256
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        32
+      ],
+      "id": "a3bde82d-3427-4443-96e8-2970cd2c1b2c",
+      "name": "Scrape Comments Data",
+      "credentials": {
+        "apifyApi": {
+          "id": "ZuB1R5erfwTzLNyD",
+          "name": "Apify account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o",
+          "mode": "list",
+          "cachedResultName": "Swades AI Assignment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048456380,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o/edit#gid=2048456380"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "LinkedIn Profile": "={{ $json.linkedinUrl }}",
+            "Name": "={{ $json.firstName }} {{ $json.lastName }}",
+            "Role/Titile": "={{ $json.role }}",
+            "Status": "Lead Generated",
+            "Engagement details/Comment": "={{ $json.comment }}",
+            "Company Name": "={{ $json.company }}",
+            "Company Website": "NA",
+            "First Name": "={{ $json.firstName }}",
+            "Last Name": "={{ $json.lastName }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role/Titile",
+              "displayName": "Role/Titile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Engagement details/Comment",
+              "displayName": "Engagement details/Comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn Profile",
+              "displayName": "LinkedIn Profile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Pattern",
+              "displayName": "Email Pattern",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1872,
+        -176
+      ],
+      "id": "c99f2612-3113-41a5-aac1-8e3341f7f012",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the items from the previous node\nconst items = Object.values($input.all());\nconst results = [];\n\n// Use a Map to track unique leads and combine comments\nconst uniqueLeads = new Map();\n\nfor (const item of items) {\n  const rawData = item.json;\n  const p = rawData.actor || {}; \n  \n  if (!p.firstName && !p.lastName) continue; \n\n  // 1. URL Normalization (Handles Emojis/Special Chars in links)\n  const rawUrl = p.linkedinUrl || \"\";\n  const cleanLinkedinUrl = encodeURI(rawUrl);\n\n  // 2. Extract Comment\n  const currentComment = rawData.commentary || \"\";\n\n  // 3. DEDUPLICATION & AGGREGATION LOGIC\n  if (uniqueLeads.has(cleanLinkedinUrl)) {\n    // Lead exists: Just add the new comment to their existing record\n    const existingLead = uniqueLeads.get(cleanLinkedinUrl);\n    if (currentComment) {\n      existingLead.json.comment += `\\n---\\n${currentComment}`;\n    }\n    continue; \n  }\n\n  // 4. Clean Names (Remove emojis for professional CRM/Sheet use)\n  const cleanFirstName = (p.firstName || \"\").replace(/[^\\p{L}\\p{N}\\s]/gu, '').trim();\n  const cleanLastName = (p.lastName || \"\").replace(/[^\\p{L}\\p{N}\\s]/gu, '').trim();\n\n  // 5. Get Professional Role and Company\n  // Priority: experience[0] -> currentPosition[0] -> headline\n  const role = (p.experience && p.experience[0] && p.experience[0].position) || p.headline || \"Professional\";\n  const company = (p.experience && p.experience[0] && p.experience[0].companyName) || \n                  (p.currentPosition && p.currentPosition[0] && p.currentPosition[0].companyName) || \"N/A\";\n\n  // 6. Link Hunter (Search profile button AND the 'About' section for URLs)\n  const aboutText = p.about || \"\";\n  const urlRegex = /(https?:\\/\\/[^\\s]+)/g;\n  const foundLinksInAbout = aboutText.match(urlRegex) || [];\n  const website = (p.profileActions && p.profileActions[0] && p.profileActions[0].url) || foundLinksInAbout[0] || \"NA\";\n\n  // 7. Create Lead Entry\n  const leadEntry = {\n    json: {\n      linkedinUrl: cleanLinkedinUrl,\n      firstName: cleanFirstName,\n      lastName: cleanLastName,\n      fullName: `${cleanFirstName} ${cleanLastName}`,\n      role: role,\n      company: company,\n      companyWebsite: website,\n      comment: currentComment,\n      followersCount: p.followerCount || 0,\n      premiumUser: p.premium || false\n    }\n  };\n\n  // Store in Map using the URL as the key\n  uniqueLeads.set(cleanLinkedinUrl, leadEntry);\n}\n\n// Convert the Map back to n8n's expected array format\nreturn Array.from(uniqueLeads.values());"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        -176
+      ],
+      "id": "2364eb9a-1ee0-4322-8f9a-564b97c8331e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "M2FMdjRVeF1HPGFcc",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Profile Search Scraper No Cookies ✅ Find all people 📧 (harvestapi/linkedin-profile-search)",
+          "cachedResultUrl": "https://console.apify.com/actors/M2FMdjRVeF1HPGFcc/input"
+        },
+        "customBody": "{\"search\":\"(\\\"sales coach\\\" OR \\\"sales leader\\\" OR \\\"head of sales\\\" OR \\\"revenue leader\\\")\",\"functionIds\":[\"25\"]}",
+        "memory": 256
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        304,
+        48
+      ],
+      "id": "dcb6479a-8d30-488d-8026-68623d19ebba",
+      "name": "Get Posts URLFrom Profiles1",
+      "credentials": {
+        "apifyApi": {
+          "id": "ZuB1R5erfwTzLNyD",
+          "name": "Apify account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\"search\":\"(\\\"sales coach\\\" OR \\\"sales leader\\\" OR \\\"head of sales\\\" OR \\\"revenue leader\\\")\",\"functionIds\":[\"25\"]}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -176
+      ],
+      "id": "72df7d17-8d60-494b-be81-bdfadd84723f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "# 01 Scrape LinkedIn Data Using Apify \n## 1.  Get Users using Keywords (Sales, Leader, Sales Coach ) and Filter who have Certain Keywords in their Profiles (Outbound, Cold Calling etc) \n## 2. Scrape Recent (Week)  Posts URLs of their Profiles \n## 3. Scrape Comments Data From their Posts (Name, Company, Role, LinkedIn Profile URL, Comment) // Multiple Comments from Same Profile are stored in same cell (To avoid Duplicates)\n## 4. Append it to the Raw Lead Data Sheet",
+        "height": 768,
+        "width": 2592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        -480
+      ],
+      "typeVersion": 1,
+      "id": "56f10bfe-bbbc-41cb-91a3-2d54683868b9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        464,
+        752
+      ],
+      "id": "3a32b5e9-3fd1-4fff-abee-3de19b477ebd",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        672
+      ],
+      "id": "369cee6f-91fc-4967-8d18-72fdac9d424f",
+      "name": "Wait",
+      "webhookId": "289cf16f-9a18-4f6e-b1ef-4252752dffa0"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o",
+          "mode": "list",
+          "cachedResultName": "Swades AI Assignment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048456380,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o/edit#gid=2048456380"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Company Website",
+              "lookupValue": "NA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        752
+      ],
+      "id": "46eca681-bfae-4a45-a7cb-42d21e043443",
+      "name": "Scraped Leads Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4ceb5022-e791-4455-bd89-2b7f12c20950",
+              "leftValue": "={{ $json[\"Company Name\"] }}",
+              "rightValue": "N/A",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "b3c8d10c-2a43-4094-8a0b-901e1b8c08d9",
+              "leftValue": "={{ $json[\"Email\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        752
+      ],
+      "id": "9cc02797-c300-401a-a8e7-6dde377657f8",
+      "name": "Filter Leads with No Company"
+    },
+    {
+      "parameters": {
+        "url": "https://api.hunter.io/v2/domain-search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "company",
+              "value": "={{ $json[\"Company Name\"] }}"
+            },
+            {
+              "name": "api_key",
+              "value": "d24351c1c1138fc9db3154f4136f460825afef6b"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1072,
+        672
+      ],
+      "id": "0a24b9c5-5582-4f9f-8fb5-304b5c6eb105",
+      "name": "Hunter.io API"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get Hunter data for the CURRENT item being processed\nconst hunterResponse = $input.item.json;\n\nif (!hunterResponse || !hunterResponse.data) {\n    return { built_email: \"No Data Available\", domain: \"N/A\" };\n}\n\nconst hunterData = hunterResponse.data;\nconst domain = hunterData.domain || \"N/A\";\nconst pattern = hunterData.pattern;\n\n// 2. Get the lead's name dynamically\n// Using $item(0) inside a Code node helps map the current input to the correct parent node data\nconst sheetNode = $(\"Scraped Leads Data\").item.json; \nlet first = (sheetNode[\"First Name\"] || \"\").toLowerCase().trim();\nlet last = (sheetNode[\"Last Name\"] || \"\").toLowerCase().trim();\n\nlet email = \"\";\n\n// 3. Logic: Pattern vs Fallback\nif (pattern && first && last) {\n    if (pattern === \"{first}.{last}\") {\n        email = `${first}.${last}@${domain}`;\n    } else if (pattern === \"{f}{last}\") {\n        email = `${first[0]}${last}@${domain}`;\n    } else if (pattern === \"{first}{last}\") {\n        email = `${first}${last}@${domain}`;\n    } else if (pattern === \"{first}\") {\n        email = `${first}@${domain}`;\n    }\n} \n\n// 4. Final Fallback\nif (!email || email === \"\") {\n    if (hunterData.emails && hunterData.emails.length > 0) {\n        email = hunterData.emails[0].value; \n    } else {\n        email = \"No Data Available\";\n    }\n}\n\nreturn { \n    built_email: email, \n    source_domain: domain,\n    pattern_used: pattern || \"Generic Fallback\",\n    debug_name: `${first} ${last}` // This helps you see it's working!\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        672
+      ],
+      "id": "5536c5ee-61cb-45b8-bcee-eabec62f0319",
+      "name": "Build Email from pattern"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o",
+          "mode": "list",
+          "cachedResultName": "Swades AI Assignment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048456380,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mABEggCMUMnmG5lxRthxRT5oJ7vx5RyuIOR7tKPoD2o/edit#gid=2048456380"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company Name": "={{ $('Scraped Leads Data').item.json[\"Company Name\"] }}",
+            "Company Website": "={{ $('Build Email from pattern').item.json.source_domain }}",
+            "Status": "Lead Enriched",
+            "Email Pattern": "={{ $('Build Email from pattern').item.json.pattern_used }}",
+            "Email": "={{ $('Build Email from pattern').item.json.built_email }}"
+          },
+          "matchingColumns": [
+            "Company Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Role/Titile",
+              "displayName": "Role/Titile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Engagement details/Comment",
+              "displayName": "Engagement details/Comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn Profile",
+              "displayName": "LinkedIn Profile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Pattern",
+              "displayName": "Email Pattern",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1520,
+        752
+      ],
+      "id": "f83ae0b9-adbf-4cb2-a59b-2f98d3436da8",
+      "name": "Update Email and Domain",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 02 Lead Enrichment\n## 1.   Get All leads From Company And Filter No Company Name and Already Updated Email Leads\n## 2. Get Company Details of Leads From Hunter IO API (Splited in Batches to Respect API rate Limit)\n## 3. If Hunter API returns Pattern then Build Email of the Lead Using Pattern ( eg: {first}{last}@company )\n## 4. If Pattern Does not exists then get the Generic Email ( eg: info@Company )\n## 5. Update The Domain and Email to the Raw Leads Sheet\n",
+        "height": 640,
+        "width": 2592,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "afa089b6-ddd0-4c34-8747-5b6b17fe5df1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        752
+      ],
+      "id": "ca916edc-a11e-405c-bfd4-f862fafad2ef",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE",
+          "mode": "list",
+          "cachedResultName": "Copy of Swades AI Assignment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048456380,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE/edit#gid=2048456380"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -128,
+        1440
+      ],
+      "id": "c8014d07-bcce-49fd-88c6-37e8d1715d4c",
+      "name": "Get Scraped Leads data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "813d630b-6f2a-4183-8fb0-24eedd97762b",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "No Data Available",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "57401d1a-2e33-4404-b9c2-ac38342adbf6",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Email Validated",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "004a4d84-1c00-4cdd-ab33-ca8bdd17a659",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Invalid Email",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "4c04878a-c5cb-4114-8a5a-03b46ab94c34",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "\"\"",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        96,
+        1440
+      ],
+      "id": "f3d957f3-5a17-43a7-88c0-3aa3165bc25d",
+      "name": "Filter Validated or Invalid Data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "24a11930-2cae-46d0-bb44-e874e5ff8492",
+              "leftValue": "={{ $json.email_deliverability.status }}",
+              "rightValue": "=deliverable",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        976,
+        1456
+      ],
+      "id": "12066a29-3925-4db7-af8f-45ed07fb8186",
+      "name": "Check Email Is Valid"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\nconst status = item.email_deliverability.status;\nconst score = item.email_quality.score;\nconst isRole = item.email_quality.is_role;\n\nlet trustLevel = \"\";\n\nif (status === \"deliverable\" && score > 0.8 && !isRole) {\n    trustLevel = \"Tier 1: Verified Personal\";\n} else if (status === \"deliverable\" && isRole) {\n    trustLevel = \"Tier 2: Verified Generic\";\n} else if (status === \"catch_all\") {\n    trustLevel = \"Tier 3: Unverifiable (Catch-all)\";\n} else {\n    trustLevel = \"Discard\";\n}\n\nreturn {\n    trust_level: trustLevel\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        1440
+      ],
+      "id": "de419812-0796-406b-b719-dd31b91545b1",
+      "name": "Set Lead Tier Level"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE",
+          "mode": "list",
+          "cachedResultName": "Copy of Swades AI Assignment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048456380,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE/edit#gid=2048456380"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Loop Over Items1').item.json.Email }}",
+            "Status": "Email Validated"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Role/Titile",
+              "displayName": "Role/Titile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Engagement details/Comment",
+              "displayName": "Engagement details/Comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn Profile",
+              "displayName": "LinkedIn Profile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Pattern",
+              "displayName": "Email Pattern",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1696,
+        1600
+      ],
+      "id": "6bdbe205-9d57-4d91-84b2-5aeecfa26f2f",
+      "name": "Update Status In Scraped Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA",
+          "mode": "list",
+          "cachedResultName": "Swades Scored Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Loop Over Items1').item.json.Name }}",
+            "Email": "={{ $('Loop Over Items1').item.json.Email }}",
+            "Email Tier": "={{ $json.trust_level }}",
+            "Title": "={{ $('Loop Over Items1').item.json[\"Role/Titile\"] }}",
+            "Comment": "={{ $('Loop Over Items1').item.json[\"Engagement details/Comment\"] }}",
+            "Email Pattern ": "={{ $('Filter Validated or Invalid Data').item.json[\"Email Pattern\"] }}",
+            "Status": "Email Validated",
+            "Company": "={{ $('Loop Over Items1').item.json.Company }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Tier",
+              "displayName": "Email Tier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comment",
+              "displayName": "Comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Pattern ",
+              "displayName": "Email Pattern ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1536,
+        1440
+      ],
+      "id": "a26cdcaa-3193-49a9-8c59-0e44d7f6e081",
+      "name": "Update the Tier And Status In Score Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE",
+          "mode": "list",
+          "cachedResultName": "Copy of Swades AI Assignment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048456380,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1v1TSewMSMQbcCIkR3894rdqV97iiGk421OdlHJiJ9cE/edit#gid=2048456380"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.email_address }}",
+            "Status": "Invalid Email"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Role/Titile",
+              "displayName": "Role/Titile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Engagement details/Comment",
+              "displayName": "Engagement details/Comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn Profile",
+              "displayName": "LinkedIn Profile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Pattern",
+              "displayName": "Email Pattern",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1264,
+        1584
+      ],
+      "id": "39ec3f55-62cf-460d-9068-2c5c59d63133",
+      "name": "Invalid Email Status(Scraped Sheet)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://emailreputation.abstractapi.com/v1/?api_key=d441992fbd884ec2af8578d8ca9a0c5a&email={{ $('Loop Over Items1').item.json.Email }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        1456
+      ],
+      "id": "c226d204-abbf-449b-a29d-f438d90c9c94",
+      "name": "Validate Email using API"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        1440
+      ],
+      "id": "19aa18f3-431f-4bca-a872-4514624bf208",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        1456
+      ],
+      "id": "9ae67926-7055-438e-a055-d6cdc22acabc",
+      "name": "Wait1",
+      "webhookId": "caa9f22d-45ea-4737-a7f1-1e369c8fea0e"
+    },
+    {
+      "parameters": {
+        "content": "# 03 Email Validation\n## 1.  Get Raw Leads Data\n## 2. Filter Already Validated Or Invalid Email Leads\n## 3. Validate the Built Emails Using Email Validator API (Split in Batches and Wait Node For Rate Limit)\n## 4. IF Email is Invalid Update it in Sheet\n## 5. IF Email is Valid then Set its Tier Using Email Score Output from Email Validator API\n## 6. Append the Validated Lead to New Leads Scoring Sheet With relevant Data (Name Company Role Email Comment etc ) [Warm Leads] and Update Status to \"Email Validated\"\n## 7. Update the Status to Email Validated in Raw Leads Sheet\n",
+        "height": 800,
+        "width": 2592,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        1056
+      ],
+      "typeVersion": 1,
+      "id": "0a998d3e-9936-4121-91f7-5939afce88db",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        976,
+        2544
+      ],
+      "id": "84ce4744-3789-4bfd-baab-9f409e903fcc",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "unKQzoO85UxB5tBt",
+          "name": "Free Tier Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"score\": 85,\n  \"priority\": \"High\",\n  \"reason\": \"CEO with high-intent comment regarding revenue scaling.\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1216,
+        2544
+      ],
+      "id": "8eae5cb4-1cf1-4ce7-933f-4151a5012784",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        2752
+      ],
+      "id": "d36025f5-96b8-4047-8e99-349836593854",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "l5jW2J7WO6mBCFRU",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        2544
+      ],
+      "id": "5f1b549a-7ba1-4dcb-88d6-1abd8163b46d",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "SzQSBHxx27JFUUps",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA",
+          "mode": "list",
+          "cachedResultName": "Swades Scored Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        96,
+        2496
+      ],
+      "id": "3a977b42-c0ef-412b-99eb-3c6fadd07a6a",
+      "name": "Get All Leads Data to be scored",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8ecae881-0be4-4c04-a826-a62e28e0e08d",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Email Validated",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "864c66cc-611e-4545-bdd1-6434811ff2a9",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Score Generated",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        336,
+        2496
+      ],
+      "id": "27355a56-a10f-4fee-8288-1a8b95c8ccf6",
+      "name": "Filter Scored And Validated Leads"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please score this lead:\n- Name: {{ $json[\"Name\"] }}\n- Title: {{ $json[\"Title\"] }}\n- Comment: {{ $json[\"Comment\"] }}\n- Email Tier: {{ $json[\"Email Tier\"] }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are an expert Sales Operations Analyst. Your goal is to score leads from 0-100 based on their potential value to a B2B SaaS company (Swades AI).\n\n### SCORING RULES:\n1. Authority (Max 40 points):\n   - Founders, CEOs, VPs: 40 points.\n   - Directors, Heads of: 30 points.\n   - Managers: 20 points.\n   - Individual Contributors (Developers, Designers): 10 points.\n\n2. Intent & Engagement (Max 40 points):\n   - High Intent: Mentioning business problems, \"pipeline,\" \"ROI,\" or \"workflows\": 35-40 points.\n   - Medium Intent: Sharing professional opinions or insights: 20-30 points.\n   - Low Intent: Generic \"Nice post\" or emojis: 5-10 points.\n\n3. Reachability (Max 20 points):\n   - Tier 1 (Verified Personal Email): 20 points.\n   - Tier 2 (Verified Generic Email/Info@): 5 points.\n\n### OUTPUT FORMAT:\nYou must return ONLY a JSON object:\n{\"score\": number, \"priority\": \"High/Medium/Low\", \"reason\": \"Short 1-sentence explanation\"}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1024,
+        2304
+      ],
+      "id": "a2f54d64-b45c-4f1b-b997-7eab3b807910",
+      "name": "Lead Scoring System"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA",
+          "mode": "list",
+          "cachedResultName": "Swades Scored Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Loop Over Items2').item.json.Email }}",
+            "Status": "Score Generated",
+            "Score": "={{ $json.output.score }}",
+            "Priority": "={{ $json.output.priority }}",
+            "Reason": "={{ $json.output.reason }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Tier",
+              "displayName": "Email Tier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Comment",
+              "displayName": "Comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Pattern ",
+              "displayName": "Email Pattern ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1696,
+        2496
+      ],
+      "id": "a8d6ace3-88b2-4caa-84aa-cada6a25f1fb",
+      "name": "Update the Score and Reason",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        560,
+        2496
+      ],
+      "id": "09a62485-1679-4207-8d9c-e1db68125b68",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        2320
+      ],
+      "id": "f3c10f4a-12c6-4645-be0f-67d7e5d84d7b",
+      "name": "Wait2",
+      "webhookId": "edc790e8-fbcb-4159-bab5-534a9fdb2025"
+    },
+    {
+      "parameters": {
+        "content": "# 04 Lead Scoring \n## 1. Get Leads From New Sheet and Filter Already Scored Leads\n## 2. Generate Score and Reason For Scoring Based on Role and Comment Using AI with Scoring Rule \n## 3. Use Output Parser to get consistent output format each time\n## 4. Update Score, Priority and Reason in Leads Scoring Sheet and Change Status to \"Score Generated\"",
+        "height": 864,
+        "width": 2592,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        2016
+      ],
+      "typeVersion": 1,
+      "id": "15a9fa63-6f34-4554-bbd8-8959773f2e9c",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# System Prompt\n\nYou are an expert Sales Operations Analyst. Your goal is to score leads from 0-100 based on their potential value to a B2B SaaS company.\n\n### SCORING RULES:\n1. Authority (Max 40 points):\n   - Founders, CEOs, VPs: 40 points.\n   - Directors, Heads of: 30 points.\n   - Managers: 20 points.\n   - Individual Contributors (Developers, Designers): 10 points.\n\n2. Intent & Engagement (Max 40 points):\n   - High Intent: Mentioning business problems, \"pipeline,\" \"ROI,\" or \"workflows\": 35-40 points.\n   - Medium Intent: Sharing professional opinions or insights: 20-30 points.\n   - Low Intent: Generic \"Nice post\" or emojis: 5-10 points.\n\n3. Reachability (Max 20 points):\n   - Tier 1 (Verified Personal Email): 20 points.\n   - Tier 2 (Verified Generic Email/Info@): 5 points.\n\n### OUTPUT FORMAT:\nYou must return ONLY a JSON object:\n{\"score\": number, \"priority\": \"High/Medium/Low\", \"reason\": \"Short 1-sentence explanation\"}",
+        "height": 864,
+        "width": 768
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2288,
+        2016
+      ],
+      "typeVersion": 1,
+      "id": "09aba923-52a4-4805-9e45-dabb9859f4c5",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Potential Influencers": {
+      "main": [
+        [
+          {
+            "node": "Posts Search Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Posts Search Query": {
+      "main": [
+        [
+          {
+            "node": "Posts URLs and Insights",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Posts URLFrom Profiles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Posts URLFrom Profiles": {
+      "main": [
+        [
+          {
+            "node": "Posts Search Query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape LinkedIn Profiles": {
+      "main": [
+        [
+          {
+            "node": "Filter Potential Influencers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Posts URLs and Insights": {
+      "main": [
+        [
+          {
+            "node": "Posts Search Query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Posts Search Query1": {
+      "main": [
+        [
+          {
+            "node": "Scrape Commentors Profile",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Scrape Comments Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Commentors Profile": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Comments Data": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Posts URLFrom Profiles1": {
+      "main": [
+        [
+          {
+            "node": "Filter Potential Influencers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Scrape LinkedIn Profiles",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Posts URLFrom Profiles1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Hunter.io API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scraped Leads Data": {
+      "main": [
+        [
+          {
+            "node": "Filter Leads with No Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Leads with No Company": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hunter.io API": {
+      "main": [
+        [
+          {
+            "node": "Build Email from pattern",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email from pattern": {
+      "main": [
+        [
+          {
+            "node": "Update Email and Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Email and Domain": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Scraped Leads Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Scraped Leads data": {
+      "main": [
+        [
+          {
+            "node": "Filter Validated or Invalid Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Validated or Invalid Data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Email Is Valid": {
+      "main": [
+        [
+          {
+            "node": "Set Lead Tier Level",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invalid Email Status(Scraped Sheet)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Lead Tier Level": {
+      "main": [
+        [
+          {
+            "node": "Update the Tier And Status In Score Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status In Scraped Sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update the Tier And Status In Score Sheet": {
+      "main": [
+        [
+          {
+            "node": "Update Status In Scraped Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invalid Email Status(Scraped Sheet)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Email using API": {
+      "main": [
+        [
+          {
+            "node": "Check Email Is Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Validate Email using API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead Scoring System",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Lead Scoring System",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead Scoring System",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get All Leads Data to be scored": {
+      "main": [
+        [
+          {
+            "node": "Filter Scored And Validated Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Scored And Validated Leads": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Scoring System": {
+      "main": [
+        [
+          {
+            "node": "Update the Score and Reason",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update the Score and Reason": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Lead Scoring System",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5d028ce8-b510-4503-ae0c-efa20834353e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "606601b16fa8293812e8f4085d302649fa55892dfcf77e89410a343a2701e9b8"
+  },
+  "id": "YV0oP4DEBzSN6hT9",
+  "tags": []
+}

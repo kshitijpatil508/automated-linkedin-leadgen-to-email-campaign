@@ -1,0 +1,1444 @@
+{
+  "name": "05 Email Campaing",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2512,
+        208
+      ],
+      "id": "6c103bfe-d4bd-49ac-b222-33ec0516ff81",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c734f18e-1df0-4bd2-9de0-3c08d9308dd4",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Campaign Started",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1824,
+        -672
+      ],
+      "id": "5e2f1505-7655-4dfd-840f-41e207b995ea",
+      "name": "Filter \"Campaign Started\" Leads"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w",
+          "mode": "list",
+          "cachedResultName": "Email Campaign ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email.trim() }}",
+            "Company": "={{ $json.Company }}",
+            "Current Step": "Initial Outreach",
+            "Campaign Status": "Ready",
+            "Assigned Sender": "=Account {{ Number($json.row_number)%3 +1}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Lead Name",
+              "displayName": "Lead Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Campaign Status",
+              "displayName": "Campaign Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Step",
+              "displayName": "Current Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assigned Sender",
+              "displayName": "Assigned Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Action Date",
+              "displayName": "Last Action Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Bounce/Reply Status",
+              "displayName": "Bounce/Reply Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reply",
+              "displayName": "Reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1600,
+        -672
+      ],
+      "id": "86c8d86c-cc00-4063-be2e-050ff8104a03",
+      "name": "Initialize Lead Campaign",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA",
+          "mode": "list",
+          "cachedResultName": "Swades Scored Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2048,
+        -672
+      ],
+      "id": "860ec7dd-09d8-4281-adfa-4b35333a96be",
+      "name": "Get All Leads from \"Scored Leads Sheet\"",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA",
+          "mode": "list",
+          "cachedResultName": "Swades Scored Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J9lMVI7-N95x2hOn0xHDt8vE0aT3o5IyHVrNAsMkaHA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Status": "Campaign Started"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Tier",
+              "displayName": "Email Tier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Comment",
+              "displayName": "Comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Pattern ",
+              "displayName": "Email Pattern ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1376,
+        -672
+      ],
+      "id": "7c5a1dd9-0878-4c7d-85e9-57252379d3b0",
+      "name": "Update \"Lead Status to Campaign Started\" in \"Scored Lead Sheet\"",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2272,
+        -672
+      ],
+      "id": "a475a9da-19d5-4bb4-9a80-0edbfe26001b",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -944,
+        208
+      ],
+      "id": "6d946eac-c3b1-498b-a688-98602785e82c",
+      "name": "Wait1",
+      "webhookId": "dcb32123-4a5c-4070-8cb4-ac3d8df7156a"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -944,
+        400
+      ],
+      "id": "2797aa9e-e688-49f3-a6f9-12080c2a672e",
+      "name": "Wait2",
+      "webhookId": "d7f44beb-d46c-42bb-8095-62538ce3a961"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        16
+      ],
+      "id": "3b774333-a587-45bf-a3d6-15a76c4dadd7",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        208
+      ],
+      "id": "3cc1473f-838f-42ca-878f-641eccbaa31d",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        400
+      ],
+      "id": "293fed1d-9322-4ff9-a284-2f0ee29239cd",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -944,
+        16
+      ],
+      "id": "d59b2b32-3116-4ac6-8bff-a31b69115120",
+      "name": "Wait",
+      "webhookId": "c39c3cac-b4d5-4e8d-900a-649fff3ea3b4"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w",
+          "mode": "list",
+          "cachedResultName": "Email Campaign ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2224,
+        208
+      ],
+      "id": "999fe701-69d8-4abc-889c-4a475cd66d23",
+      "name": "Get All Leads Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Define time constants\nconst now = new Date();\nconst oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds\n\n// Filter the leads and return ONLY the ones ready to be emailed\nreturn $input.all().filter(item => {\n  const step = item.json[\"Current Step\"];\n  const lastActionStr = item.json[\"Last Action Date\"];\n  const status = item.json[\"Bounce/Reply Status\"];\n\n  // 0. SAFETY CHECK\n  // If status is Bounced, Replied, or Completed, never email them again.\n  if ([\"Bounced\", \"Replied\", \"Completed\", \"Skipped\"].includes(status)) {\n    return false;\n  }\n\n  // RULE 1: Initial Outreach (New Leads)\n  // Condition: Step is \"Initial Outreach\" AND Date is Empty (never sent)\n  if (step === \"Initial Outreach\" && !lastActionStr) {\n    return true;\n  }\n\n  // RULE 2: First Follow Up\n  // Condition: Step is \"First Follow up\" AND it has been > 24 hours since last email\n  if (step === \"First Follow up\" && lastActionStr) {\n    const lastActionTime = new Date(lastActionStr).getTime();\n    // Check if valid date (not \"Invalid Date\") and if 24h has passed\n    if (!isNaN(lastActionTime) && (now.getTime() - lastActionTime > oneDay)) {\n      return true;\n    }\n  }\n\n  // RULE 3: Last Follow Up\n  // Condition: Step is \"Last Follow up\" AND it has been > 48 hours since last email\n  if (step === \"Last Follow up\" && lastActionStr) {\n    const lastActionTime = new Date(lastActionStr).getTime();\n    // Check if 48h has passed\n    if (!isNaN(lastActionTime) && (now.getTime() - lastActionTime > (oneDay * 2))) {\n      return true;\n    }\n  }\n\n  // If no rules matched, filter this lead out\n  return false;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1936,
+        208
+      ],
+      "id": "26f12a40-24e1-4a16-b748-7ab7bdf3635e",
+      "name": "Check Last Date and Replied Status"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"Assigned Sender\"] }}",
+                    "rightValue": "=Account 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "08c17c4b-ec8d-40a2-b3cc-8359d8de77d6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Account 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "da203904-812b-4315-952e-967ab0a4eb36",
+                    "leftValue": "={{ $json[\"Assigned Sender\"] }}",
+                    "rightValue": "Account 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Account 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9720ba0f-f86b-4e6e-b049-86f4b628f710",
+                    "leftValue": "={{ $json[\"Assigned Sender\"] }}",
+                    "rightValue": "Account 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Account 3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1392,
+        192
+      ],
+      "id": "52988863-1e30-4bf3-b33f-50494e2d3542",
+      "name": "Route to Assigned Accounts"
+    },
+    {
+      "parameters": {
+        "sendTo": "hardikaws01@gmail.com",
+        "subject": "={{ $('Route to Assigned Accounts').item.json.finalSubject }}",
+        "emailType": "text",
+        "message": "={{ $('Route to Assigned Accounts').item.json.finalBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -720,
+        16
+      ],
+      "id": "8faad200-811e-4581-a5d1-7539ba01d10a",
+      "name": "Account 1",
+      "webhookId": "e41a8f6a-1d36-406d-9414-6c97bd96f624",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "TqZLfG8k59XBWjZT",
+          "name": "KJP508"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "hardikaws01@gmail.com",
+        "subject": "={{ $json.finalSubject }}",
+        "emailType": "text",
+        "message": "={{ $json.finalBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -720,
+        208
+      ],
+      "id": "42d7da74-df31-43d6-aae5-66c2430fcb83",
+      "name": "Account 2",
+      "webhookId": "e41a8f6a-1d36-406d-9414-6c97bd96f624",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rtNy4C9Ugz89K1Ip",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "hardikaws01@gmail.com",
+        "subject": "={{ $json.finalSubject }}",
+        "emailType": "text",
+        "message": "={{ $json.finalBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -720,
+        400
+      ],
+      "id": "f9598b24-d91e-4462-81ba-130964fb0794",
+      "name": "Account 3",
+      "webhookId": "e41a8f6a-1d36-406d-9414-6c97bd96f624",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SMvsDE9pTbizSyoc",
+          "name": "CNL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const rawFrom = item.json[\"From\"];\n  \n  // 1. Extract email using Regex (Finds text between < and >)\n  // If no brackets found (rare), it uses the whole string.\n  const emailMatch = rawFrom.match(/<(.+)>/);\n  const cleanEmail = emailMatch ? emailMatch[1] : rawFrom;\n\n  // 2. Output the clean email\n  item.json.cleanEmail = cleanEmail;\n  item.json.statusUpdate = \"Replied\";\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1072,
+        1152
+      ],
+      "id": "1075339e-2f9f-4805-80be-59537f58fbc8",
+      "name": "Get the Senders Email_ID"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w",
+          "mode": "list",
+          "cachedResultName": "Email Campaign ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.cleanEmail }}",
+            "Campaign Status": "Stopped",
+            "Current Step": "Completed",
+            "Bounce/Reply Status": "Replied",
+            "Reply": "={{ $json.snippet }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Lead Name",
+              "displayName": "Lead Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Campaign Status",
+              "displayName": "Campaign Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Step",
+              "displayName": "Current Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assigned Sender",
+              "displayName": "Assigned Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Action Date",
+              "displayName": "Last Action Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Bounce/Reply Status",
+              "displayName": "Bounce/Reply Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reply",
+              "displayName": "Reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -704,
+        1152
+      ],
+      "id": "0102eb25-55d7-451c-adbe-b6b7076f0f89",
+      "name": "Update Replied Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Safety & Timing Filter\n\nThis node acts as the **\"Traffic Controller\"** for the workflow. It filters the raw list of leads and only passes those ready for an email **right now**.\n\n**Logic Rules:**\n* **Safety Check:** Instantly blocks anyone marked as `Replied`, `Bounced`, or `Completed`.\n* **New Leads:** Passes \"Initial Outreach\" leads **only** if they have no `Last Action Date`.\n* **Follow-Ups:**\n    * **Email 2:** Must wait **> 24 hours** after Email 1.\n    * **Email 3:** Must wait **> 48 hours** after Email 2.\n\n**Output:** Only actionable leads flow to the next step. Everyone else is dropped.",
+        "height": 480,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -128,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "74de0edc-71a5-49a5-9327-9c320bc652a2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Define templates with placeholders {{First Name}} and {{Company Name}}\nconst templates = {\n  \"Initial Outreach\": {\n    subject: \"Scaling outbound at {{Company Name}}?\",\n    body: \"Hi {{First Name}},\\n\\nNoticed you're building out the sales motion at {{Company Name}}.\\n\\nMost founders I talk to are still having their reps dial manually, which usually means they're spending 40 mins of every hour just listening to dial tones.\\n\\nPowerDialer.ai automates that entire workflow. We’re an AI-powered platform designed specifically to help SaaS teams double their daily conversation volume without adding headcount.\\n\\nOpen to a quick 5-min demo to see how it works?\\n\\nBest,\\nPowerDialer.ai\"\n  },\n  \"First Follow up\": {\n    subject: \"Re: Scaling outbound at {{Company Name}}?\",\n    body: \"Hi {{First Name}},\\n\\nQuick follow-up on this—\\n\\nIf your team is doing 50 calls a day manually, you're likely missing out on about 10 hours of productive selling time per week, per rep.\\n\\nWe help teams like yours reclaim that time. Is fixing your connect rate a priority right now, or should I hold off?\\n\\nCheers,\\nPowerDialer.ai\"\n  },\n  \"Last Follow up\": {\n    subject: \"Last try / Case study\",\n    body: \"Hi {{First Name}},\\n\\nI don't want to clutter your inbox, so this is my last email.\\n\\nI’m assuming outbound automation isn’t a priority for {{Company Name}} at the moment.\\n\\nI'll leave you with this: We recently helped a similar SaaS agency increase their booked meetings by 40% in their first month just by switching from manual dialing to our AI workflow.\\n\\nIf you ever want to see how they did it, feel free to ping me.\\n\\nBest of luck,\\nPowerDialer.ai\"\n  }\n};\n\n// 2. Define Next Steps (REQUIRED for the Google Sheet Update later)\nconst nextSteps = {\n  \"Initial Outreach\": \"First Follow up\",\n  \"First Follow up\": \"Last Follow up\",\n  \"Last Follow up\": \"Completed\"\n};\n\n// 3. Loop through all items\nfor (const item of $input.all()) {\n  const currentStep = item.json[\"Current Step\"];\n  \n  // -- DATA PREPARATION --\n  const fullName = item.json[\"Lead Name\"] || \"there\";\n  const firstName = fullName.split(\" \")[0]; \n  const company = item.json[\"Company\"] || \"your company\";\n\n  // 4. Find and Personalize\n  if (templates[currentStep]) {\n    let subject = templates[currentStep].subject;\n    let body = templates[currentStep].body;\n\n    // -- REPLACEMENT LOGIC --\n    subject = subject.replace(/{{First Name}}/g, firstName).replace(/{{Company Name}}/g, company);\n    body = body.replace(/{{First Name}}/g, firstName).replace(/{{Company Name}}/g, company);\n\n    // -- OUTPUTS FOR GMAIL --\n    item.json.finalSubject = subject;\n    item.json.finalBody = body;\n    \n    // -- OUTPUTS FOR GOOGLE SHEET UPDATE --\n    // This calculates what the *new* status should be after sending\n    item.json.newStatus = nextSteps[currentStep] || \"Completed\";\n    // This saves the exact time now so the filter works tomorrow\n    item.json.timestamp = new Date().toISOString();\n\n  } else {\n    // Fallback\n    item.json.finalSubject = \"Error: Unknown Step\";\n    item.json.finalBody = \"Could not find template for step: \" + currentStep;\n  }\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1664,
+        208
+      ],
+      "id": "97fa135f-3aa7-4879-bd87-d3177f80bec7",
+      "name": "Draft Personalized Email for Each lead"
+    },
+    {
+      "parameters": {
+        "content": "### Template & Personalization Engine\n\nThis node prepares the email content and future database updates.\n\n**Key Actions:**\n1.  **Selects Template:** Matches `Current Step` (e.g., \"Initial Outreach\") to the correct email copy.\n2.  **Personalizes:** Replaces placeholders like `{{First Name}}` and `{{Company Name}}` with real data.\n3.  **Preps Update:** Calculates the *next* step (e.g., moves to \"First Follow up\") and sets the timestamp so the database can be updated after sending.",
+        "height": 480,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -128,
+        112
+      ],
+      "typeVersion": 1,
+      "id": "12d556c8-dc34-47ad-8e3f-2d3f77201b8c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w",
+          "mode": "list",
+          "cachedResultName": "Email Campaign ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KMCZWyp2D54ooOdzWWHqZfwXac2Pt15CKn6J8WrJS-w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Draft Personalized Email for Each lead').item.json.Email }}",
+            "Campaign Status": "Active",
+            "Current Step": "={{ $('Draft Personalized Email for Each lead').item.json.newStatus }}",
+            "Last Action Date": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Lead Name",
+              "displayName": "Lead Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Campaign Status",
+              "displayName": "Campaign Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Step",
+              "displayName": "Current Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assigned Sender",
+              "displayName": "Assigned Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Action Date",
+              "displayName": "Last Action Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bounce/Reply Status",
+              "displayName": "Bounce/Reply Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reply",
+              "displayName": "Reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -496,
+        208
+      ],
+      "id": "ac3dd672-1103-4006-9917-e775ea2b539d",
+      "name": "Update Action Time and Current Step",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "raSwkG9izM5k63tD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1472,
+        1152
+      ],
+      "id": "f1e993e2-1450-4477-921e-d4b2a6811f4b",
+      "name": "Account KPN8N",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "rtNy4C9Ugz89K1Ip",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1472,
+        1344
+      ],
+      "id": "ca5140c9-49ef-47df-b62e-ecba1fc1a7a6",
+      "name": "Account KJP508",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "TqZLfG8k59XBWjZT",
+          "name": "KJP508"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1472,
+        960
+      ],
+      "id": "13bce54e-f6c4-4102-85c3-315ebf7923ad",
+      "name": "Account CNL",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SMvsDE9pTbizSyoc",
+          "name": "CNL"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Migrate Data to Email Campaign Sheet\n## 1. Get all data from Scored leads sheet\n## 2. Filter Leads whose Status is already \"Campaign Started\"\n## 3. Intialize Campaing Status and Append Lead to Email Campaign Sheet (Current Step => Initial Outreach , Campaig Status => Ready )\n## 4. Assign Email Account to each lead using (rowNumber%3+1) formula (So each account gets equal Leads) [Round Robin]\n## 5. Update \"Campaign Started\" Status in Scored Lead Sheets",
+        "height": 608,
+        "width": 1776,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2656,
+        -1056
+      ],
+      "typeVersion": 1,
+      "id": "e572d11d-c380-4ae2-b108-6a4977e1e118",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# State Management\n## 1. Get all data from the Email Campaign Sheet\n## 2. Filter Leads Who have Already Replied\n## 3. Filter Leads with last 1st Mail Sent in 24 Hours \n## 4. Filter Leads with 2nd Mail Sent in 48 Hours \n## 5. Select Templates For each Lead According to their Current Status (eg: Initial Outreach : Template 1, First Followup: Template 2)\n## 6. Create a draft for each lead with Personalised Subject and Body\n## 7. Route Each Lead to their Assigned Mail Account \n## 8. Send Mail And update the Current Action Time and the Current Step Status (Intital Outreach => First Followup , First Folloup => Last Followup , Last Followup => Completed)",
+        "height": 976,
+        "width": 2512,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2656,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "3cef5f82-c45f-4722-8286-a2318074eecb",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# Reply Update Logic\n## 1. Set Scheduled Trigger For Each Account\n## 2. Get Email ID of Sender \n## 3. Check if Email_ID exists in Email Campaign Sheet\n## 4. If Exists then Update the Replied Status and Reply Content in the Sheet",
+        "height": 704,
+        "width": 2496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2592,
+        880
+      ],
+      "typeVersion": 1,
+      "id": "0bfd6fbe-a7b8-425e-9601-583d2b8f5785",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get All Leads Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter \"Campaign Started\" Leads": {
+      "main": [
+        [
+          {
+            "node": "Initialize Lead Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Lead Campaign": {
+      "main": [
+        [
+          {
+            "node": "Update \"Lead Status to Campaign Started\" in \"Scored Lead Sheet\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Leads from \"Scored Leads Sheet\"": {
+      "main": [
+        [
+          {
+            "node": "Filter \"Campaign Started\" Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get All Leads from \"Scored Leads Sheet\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Account 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Account 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Account 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Leads Data": {
+      "main": [
+        [
+          {
+            "node": "Check Last Date and Replied Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Last Date and Replied Status": {
+      "main": [
+        [
+          {
+            "node": "Draft Personalized Email for Each lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route to Assigned Accounts": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Account 1": {
+      "main": [
+        [
+          {
+            "node": "Update Action Time and Current Step",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Account 2": {
+      "main": [
+        [
+          {
+            "node": "Update Action Time and Current Step",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Account 3": {
+      "main": [
+        [
+          {
+            "node": "Update Action Time and Current Step",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get the Senders Email_ID": {
+      "main": [
+        [
+          {
+            "node": "Update Replied Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Personalized Email for Each lead": {
+      "main": [
+        [
+          {
+            "node": "Route to Assigned Accounts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Account KPN8N": {
+      "main": [
+        [
+          {
+            "node": "Get the Senders Email_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Account KJP508": {
+      "main": [
+        [
+          {
+            "node": "Get the Senders Email_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Account CNL": {
+      "main": [
+        [
+          {
+            "node": "Get the Senders Email_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "edc9283a-2ca1-4e05-b3f5-4f48df86983b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "606601b16fa8293812e8f4085d302649fa55892dfcf77e89410a343a2701e9b8"
+  },
+  "id": "25hFoVbjgRustSnK",
+  "tags": []
+}
