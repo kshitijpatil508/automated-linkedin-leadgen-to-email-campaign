@@ -18,6 +18,41 @@ The result: a self-sustaining outbound system that continuously sources, qualifi
 
 ---
 
+## 📸 Visuals
+
+### Part 1 — LinkedIn Lead Intelligence Workflow
+
+<img width="2170" height="1240" alt="image" src="https://github.com/user-attachments/assets/8564fabc-b7b7-4fb6-b4b7-440745b45864" />
+<img width="2290" height="1230" alt="image" src="https://github.com/user-attachments/assets/9fdb6b07-d226-4ca9-bd04-4caca8fd6df7" />
+
+
+---
+
+### Part 2 — Email Campaign Engine Workflow
+
+<img width="2252" height="878" alt="image" src="https://github.com/user-attachments/assets/6f0cc215-ecd7-4e41-b65d-530193808d9e" />
+<img width="2716" height="930" alt="image" src="https://github.com/user-attachments/assets/b39a7786-d1b2-43d0-b4e3-de90f17f5049" />
+<img width="2382" height="854" alt="image" src="https://github.com/user-attachments/assets/1ab1fcb9-c57f-4e83-b7a1-f2f3ae2b97ab" />
+
+---
+
+### Google Sheet — Scraped Raw Leads Sheet
+<img width="1456" height="695" alt="Screenshot 2026-03-11 at 5 18 07 PM" src="https://github.com/user-attachments/assets/d1ad8849-4181-4235-905a-1d582f73ac63" />
+
+---
+
+### Google Sheet — Filtered Email & Scored Leads Sheet
+
+<img width="1465" height="689" alt="Screenshot 2026-03-11 at 5 18 19 PM" src="https://github.com/user-attachments/assets/5f5a8e1a-af21-4919-8dc8-5dc8101c215a" />
+
+---
+
+### Google Sheet — Email Campaign Sheet
+
+<img width="1466" height="685" alt="Screenshot 2026-03-11 at 5 18 31 PM" src="https://github.com/user-attachments/assets/d5e99fa6-a928-4ad5-a989-e17a9022f385" />
+
+---
+
 ## 🗺️ System Architecture — The Full Pipeline
 
 ```
@@ -60,42 +95,6 @@ The result: a self-sustaining outbound system that continuously sources, qualifi
 
 ---
 
-
-
-## 📸 Visuals
-
-### Part 1 — LinkedIn Lead Intelligence Workflow
-
-<img width="2170" height="1240" alt="image" src="https://github.com/user-attachments/assets/8564fabc-b7b7-4fb6-b4b7-440745b45864" />
-<img width="2290" height="1230" alt="image" src="https://github.com/user-attachments/assets/9fdb6b07-d226-4ca9-bd04-4caca8fd6df7" />
-
-
----
-
-### Part 2 — Email Campaign Engine Workflow
-
-<img width="2252" height="878" alt="image" src="https://github.com/user-attachments/assets/6f0cc215-ecd7-4e41-b65d-530193808d9e" />
-<img width="2716" height="930" alt="image" src="https://github.com/user-attachments/assets/b39a7786-d1b2-43d0-b4e3-de90f17f5049" />
-<img width="2382" height="854" alt="image" src="https://github.com/user-attachments/assets/1ab1fcb9-c57f-4e83-b7a1-f2f3ae2b97ab" />
-
----
-
-### Google Sheet — Scraped Raw Leads Sheet
-<img width="1456" height="695" alt="Screenshot 2026-03-11 at 5 18 07 PM" src="https://github.com/user-attachments/assets/d1ad8849-4181-4235-905a-1d582f73ac63" />
-
----
-
-### Google Sheet — Filtered Email & Scored Leads Sheet
-
-<img width="1465" height="689" alt="Screenshot 2026-03-11 at 5 18 19 PM" src="https://github.com/user-attachments/assets/5f5a8e1a-af21-4919-8dc8-5dc8101c215a" />
-
----
-
-### Google Sheet — Email Campaign Sheet
-
-<img width="1466" height="685" alt="Screenshot 2026-03-11 at 5 18 31 PM" src="https://github.com/user-attachments/assets/d5e99fa6-a928-4ad5-a989-e17a9022f385" />
-
----
 ## 🛠️ Setup and Installation Guide
 
 ### Files
